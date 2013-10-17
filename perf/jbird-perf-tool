@@ -1,0 +1,11 @@
+#!/bin/bash
+
+me=$0
+while [ -L "$me" ]; do
+    me=$(readlink "$me")
+done
+
+dir=$(dirname "$me")
+dir=$(cd "$dir" && pwd -P)
+
+java -classpath "$dir"/acunu-perf-tool.jar:"$dir"/lib/*:"$dir"/../client/acunu-client.jar:"$dir"/../client/lib/* com.acunu.performance.PerformanceTool "$@"

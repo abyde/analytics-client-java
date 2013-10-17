@@ -1,0 +1,238 @@
+<project name="Client" default="package" basedir=".">
+
+	<property name="outputdir" value="out/acunu-java-client" />
+	<property name="builddir" value="out/build" />
+
+	<target name="package" depends="zip,targz" />
+
+	<target name="zip" depends="build">
+		<zip
+			destfile="out/acunu-java-client.zip"
+			basedir="out"
+			includes="acunu-java-client/**" />
+	</target>
+
+	<target name="targz" depends="build">
+		<tar
+			destfile="out/acunu-java-client.tar"
+			basedir="out"
+			includes="acunu-java-client/**" />
+		<gzip destfile="out/acunu-java-client.tar.gz" src="out/acunu-java-client.tar" />
+	</target>
+
+	<target name="build" depends="client,example,perf,readme" />
+
+	<target name="client" depends="client-build,client-lib,client-src,client-doc" />
+	<target name="example" depends="example-build,example-lib,example-src,example-doc,example-ancillary" />
+	<target name="perf" depends="perf-build,perf-lib,perf-src,perf-doc,perf-ancillary,client" />
+
+	<target name="clean">
+		<delete dir="out" />
+	</target>
+
+
+	<target name="init">
+		<mkdir dir="${outputdir}/client/lib" />
+		<mkdir dir="${outputdir}/client/doc" />
+		<mkdir dir="${outputdir}/example/lib" />
+		<mkdir dir="${outputdir}/example/doc" />
+		<mkdir dir="${outputdir}/perf/lib" />
+		<mkdir dir="${outputdir}/perf/doc" />
+		<mkdir dir="${builddir}/client" />
+		<mkdir dir="${builddir}/example" />
+		<mkdir dir="${builddir}/perf" />
+	</target>
+
+
+	<target name="client-lib" depends="init">
+		<copy todir="${outputdir}/client/lib">
+			<fileset dir="client/lib" />
+		</copy>
+	</target>
+
+	<target name="perf-lib" depends="init">
+		<copy todir="${outputdir}/perf/lib">
+			<fileset dir="perf/lib" />
+		</copy>
+	</target>
+
+	<target name="example-lib" depends="init">
+		<copy todir="${outputdir}/example/lib">
+			<fileset dir="example/lib" />
+		</copy>
+	</target>
+
+
+	<target name="client-src" depends="init">
+		<jar jarfile="${outputdir}/client/acunu-client-src.jar">
+			<fileset dir="client/src">
+				<include name="**/*.java" />
+			</fileset>
+		</jar>
+	</target>
+
+	<target name="example-src" depends="init">
+		<jar jarfile="${outputdir}/example/acunu-example-src.jar">
+			<fileset dir="example/src">
+				<include name="**/*.java" />
+			</fileset>
+		</jar>
+	</target>
+
+	<target name="perf-src" depends="init">
+		<jar jarfile="${outputdir}/perf/acunu-perf-src.jar">
+			<fileset dir="perf/src">
+				<include name="**/*.java" />
+			</fileset>
+		</jar>
+	</target>
+
+
+	<target name="client-build" depends="init">
+
+		<javac srcdir="client/src" destdir="${builddir}/client" source="1.6">
+			<classpath>
+				<fileset dir="client/lib">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+
+		<jar jarfile="${outputdir}/client/acunu-client.jar">
+			<fileset dir="${builddir}/client">
+				<include name="**/*.class" />
+			</fileset>
+		</jar>
+
+	</target>
+
+
+	<target name="example-build" depends="init,client-build">
+
+		<javac srcdir="example/src" destdir="${builddir}/example" source="1.6">
+			<classpath>
+				<fileset dir="example/lib">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="client/lib">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="${outputdir}/client">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+
+		<jar jarfile="${outputdir}/example/acunu-client-example.jar">
+			<fileset dir="${builddir}/example">
+				<include name="**/*.class" />
+			</fileset>
+		</jar>
+
+	</target>
+
+
+	<target name="perf-build" depends="init,client-build">
+
+		<javac srcdir="perf/src" destdir="${builddir}/perf" source="1.6">
+			<classpath>
+				<fileset dir="perf/lib">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="client/lib">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="${outputdir}/client">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+
+		<jar jarfile="${outputdir}/perf/acunu-perf-tool.jar">
+			<fileset dir="${builddir}/perf">
+				<include name="**/*.class" />
+			</fileset>
+		</jar>
+
+	</target>
+
+
+
+	<target name="client-doc" depends="init">
+
+		<javadoc sourcepath="client/src" destdir="${outputdir}/client/doc" access="public" author="true" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.6" splitindex="true" use="true" version="true">
+			<classpath>
+				<fileset dir="client/lib">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+			<link href="http://download.oracle.com/javase/6/docs/api/" />
+		</javadoc>
+
+	</target>
+
+	<target name="example-doc" depends="init,client-build">
+
+		<javadoc sourcepath="example/src" destdir="${outputdir}/example/doc" access="public" author="true" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.6" splitindex="true" use="true" version="true">
+			<classpath>
+				<fileset dir="client/lib">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="${outputdir}/client">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="example/lib">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+			<link href="http://download.oracle.com/javase/6/docs/api/" />
+		</javadoc>
+
+	</target>
+
+	<target name="perf-doc" depends="init">
+
+		<javadoc sourcepath="perf/src" destdir="${outputdir}/perf/doc" access="public" author="true" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.6" splitindex="true" use="true" version="true">
+			<classpath>
+				<fileset dir="client/lib">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="${outputdir}/client">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="perf/lib">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+			<link href="http://download.oracle.com/javase/6/docs/api/" />
+		</javadoc>
+
+	</target>
+
+
+	<target name="example-ancillary">
+		<copy file="example/client-example.aql" toDir="${outputdir}/example" />
+		<exec executable="cp">
+			<arg value="example/client-example" />
+			<arg value="${outputdir}/example" />
+		</exec>
+	</target>
+
+	<target name="perf-ancillary">
+		<copy file="perf/perf-example.aql" toDir="${outputdir}/perf" />
+		<copy file="perf/perf-example.yaml" toDir="${outputdir}/perf" />
+		<exec executable="cp">
+			<arg value="perf/perf-example" />
+			<arg value="${outputdir}/perf" />
+		</exec>
+		<exec executable="cp">
+			<arg value="perf/jbird-perf-tool" />
+			<arg value="${outputdir}/perf" />
+		</exec>
+	</target>
+
+	<target name="readme">
+		<copy file="README.txt" toDir="${outputdir}" />
+	</target>
+
+</project>

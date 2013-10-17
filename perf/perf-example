@@ -1,0 +1,30 @@
+#!/bin/bash
+
+me=$0
+while [ -L "$me" ]; do
+    me=$(readlink "$me")
+done
+
+dir=$(dirname "$me")
+dir=$(cd "$dir" && pwd -P)
+
+if [[ $# -lt 1 ]] || [[ $1 =~ ^-h|--help ]]; then
+    echo "usage: $0 HOSTNAME [PORT [USERNAME PASSWORD]]"
+    echo
+    echo "HOST: Analytics host"
+    echo "PORT: Analytics port (default 8080)"
+    echo
+    echo "Send some random events to an Acunu Analytics node. Uses"
+    echo "perf-examples.yaml to determine the data that is sent."
+    echo "It supposes that the node already has the tables defined in"
+    echo "perf-example.aql (use summer < perf-examples.aql on the node"
+    echo "to import them)"
+    exit 2
+fi
+
+args=(-hostname "$1" -port "${2:-8080}")
+if [[ $# -gt 2 ]]; then
+    args+=(-username "$3" -password "$4")
+fi
+
+"$dir"/jbird-perf-tool "${args[@]}" -duration 30 -threads 20 -file "$dir"/perf-example.yaml -eventmultiplier 20 -querymultiplier 1 -eventbatchsize 100 -eventqueuesize 300 -verbose true

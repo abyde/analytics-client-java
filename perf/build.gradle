@@ -1,0 +1,9 @@
+apply plugin: 'application'
+
+mainClassName = 'com.acunu.performance.PerformanceTool'
+
+dependencies {
+    compile project(':acunu-analytics-client')
+    compile 'colt:colt:1.2.0'
+    compile 'com.beust:jcommander:1.32'
+}

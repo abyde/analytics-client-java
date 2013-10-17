@@ -1,0 +1,7 @@
+dependencies {
+    compile 'org.apache.httpcomponents:httpclient:4.3'
+    compile 'org.slf4j:slf4j-api:1.7.5'
+    compile 'net.minidev:json-smart:1.2'
+    testCompile 'org.slf4j:slf4j-simple:1.7.5'
+    testCompile 'org.slf4j:jcl-over-slf4j:1.7.5'
+}

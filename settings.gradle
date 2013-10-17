@@ -1,0 +1,6 @@
+include 'client', 'example', 'perf'
+rootProject.name = 'acunu-analytics-client-parent'
+// we should probably rename the directories to conform to these project names (and remove the following lines)
+project(':client').name = 'acunu-analytics-client'
+project(':example').name = 'acunu-analytics-client-example'
+project(':perf').name = 'acunu-analytics-performance-tool'

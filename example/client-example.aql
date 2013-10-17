@@ -1,0 +1,16 @@
+create table client_example (
+
+	name string,
+	dayofweek enum(mon,tue,wed,thu,fri,sat,sun),
+	spend long
+);
+
+create cube select sum(spend) from client_example where name; 
+create cube select sum(spend) from client_example where dayofweek;
+create cube select sum(spend) from client_example group by name; 
+create cube select sum(spend) from client_example group by dayofweek;
+create cube select sum(spend) from client_example where name group by dayofweek;
+create cube select sum(spend) from client_example where dayofweek group by name;
+
+create procedure sum_by_name as select sum(spend) from client_example where name = ${name} group by dayofweek;
+

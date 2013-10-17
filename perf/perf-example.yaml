@@ -1,0 +1,137 @@
+
+generators:
+
+  - !RandomChoice
+    &random-colours
+    random: uniform
+    choices: 
+      - red
+      - blue
+      - green
+      - gold
+      - pink
+      - purple
+
+  - !GeneratedChoice
+    &gen
+    random: uniform
+    size: 2
+    generator: *random-colours
+
+  - !RandomChoice
+    &power-law-quarks
+    random: powerlaw
+    choices: 
+      - up
+      - down
+      - strange
+      - charmed
+      - top
+      - bottom
+
+
+  - !WeightedChoice
+    &weighted-names
+    choices:
+      - Smith
+      - 10
+      - Jones
+      - 9
+      - Allison
+      - 3
+      - Hollingberry
+      - 1
+
+
+  - !RandomBag
+    &subjects
+    random: uniform
+    min: 6
+    max: 10
+    strings: 
+      - music
+      - drama
+      - french
+      - german
+      - maths
+      - physics
+      - computer studies
+      - english
+      - english lit
+      - PE
+      - greek
+      - latin
+
+
+  - !RandomPath
+    &animal-sounds
+    random: uniform
+    separator: /
+    paths: [[green,blue],[birds,foxes,rabbits],[moo,bark]]
+
+
+  - !RandomGeoHash
+    &london
+    random: uniform
+    top: 51.5514589053764
+    left: -0.308990478515625
+    bottom: 51.45914115860514
+    right: -0.041885375976562
+    length: 12
+    
+    
+
+  - !FormattedString
+    &codes
+    format: "%s-K%d"
+    generators:
+      - !RandomChoice { random: uniform, choices: [ A, B, C, D ] }
+      - !RandomLong { random: uniform, low: 50, high: 100 }
+
+
+events:
+
+  - !Event
+    endpoint: perf_example
+    rate: 10
+    fields:
+      colour: *random-colours
+      quark: *power-law-quarks
+      name: *weighted-names
+      subjects: *subjects
+      animals: *animal-sounds
+      location: *london
+      timestamp: !Timestamp {}
+      minute: !IntervalTimestamp { interval: 60000 }
+      priority: !RandomLong { random: uniform, low: 0, high: 10 }
+      height: !RandomDouble { random: uniform, low: 0.01, high: 2.15 }
+      ip: !RandomIp { random: uniform, size: 10000 }
+      constantnumber: 6
+      constantstring: hello world
+      index: !SequentialLong { start: 1000, delta: 100 }
+      serial: *codes
+      quantity: !RandomChoice { random: uniform, choices: [ 1, 5, 10, 25, 100 ] }
+
+
+queries:
+
+  - !Query
+    rate: 1
+    aql: SELECT COUNT FROM Example WHERE colour=red GROUP BY name,quark
+
+
+  - !ParameterisedQuery
+    rate: 1
+    aql: SELECT COUNT FROM Example WHERE colour=%s GROUP BY name,quark
+    parameters:
+      - *random-colours
+
+
+  - !ProcedureQuery
+    rate: 1
+    procedure: colourcount
+    parameters:
+      colour: *random-colours
+      
+
+

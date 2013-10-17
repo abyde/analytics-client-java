@@ -1,0 +1,25 @@
+
+
+CREATE TABLE perf_example (
+	colour string,
+	quark enum(up,down,strange,charmed,`top`,bottom),
+	name string,
+	subjects bag,
+	animals path('/'),
+	location string,
+	timestamp time(min),
+	minute time(hour),
+	priority long(1),
+	height double,
+	ip string,
+	constantnumber long(1),
+	constantstring string,
+	index long(100),
+	serial string,
+	quantity long(1)
+);
+
+CREATE CUBE SELECT COUNT FROM perf_example WHERE colour GROUP BY name, quark;
+
+CREATE PROCEDURE colourcount AS SELECT COUNT FROM perf_example WHERE colour = ${colour} GROUP BY name, quark;
+

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+java -classpath acunu-client-example.jar:lib/*:../client/acunu-client.jar:../client/lib/* com.acunu.client.example.HttpExample "$@"
+
