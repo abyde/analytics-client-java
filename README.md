@@ -44,3 +44,8 @@ Then insert some "random" events:
 $ out/acunu-java-client/perf/perf-example HOST [PORT]
 ```
 
+
+Authors
+-------
+
+Robert Allison <rallison@acunu.com>
